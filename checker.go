@@ -77,7 +77,11 @@ func checkAddressCode(addressCode string, birthdayCode string, strict bool) bool
 	// 这里不判断市级信息的原因：
 	// 1. 直辖市，无市级信息
 	// 2. 省直辖县或县级市，无市级信息
-	if addressInfo["province"] == "" || addressInfo["district"] == "" {
+	if strict && (addressInfo["province"] == "" || addressInfo["district"] == "") {
+		return false
+	}
+	// 只检查省
+	if !strict && addressInfo["province"] == "" {
 		return false
 	}
 
