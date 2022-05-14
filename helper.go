@@ -5,9 +5,6 @@
 package idvalidator
 
 import (
-	"strconv"
-	"strings"
-
 	"github.com/guanguans/id-validator/data"
 	"github.com/spf13/cast"
 )
@@ -93,30 +90,12 @@ func getAddress(addressCode string, birthdayCode string, strict bool) string {
 
 // 获取星座信息
 func getConstellation(birthdayCode string) string {
-	month, _ := strconv.Atoi(substr(birthdayCode, 4, 6))
-	day, _ := strconv.Atoi(substr(birthdayCode, 6, 8))
-	startDate := data.Constellation()[month]["start_date"]
-	startDay, _ := strconv.Atoi(strings.Split(startDate, "-")[1])
-	if day >= startDay {
-		return data.Constellation()[month]["name"]
-	}
-
-	tmpMonth := month - 1
-	if month == 1 {
-		tmpMonth = 12
-	}
-
-	return data.Constellation()[tmpMonth]["name"]
+	return ""
 }
 
 // 获取生肖信息
 func getChineseZodiac(birthdayCode string) string {
-	// 子鼠
-	start := 1900
-	end := cast.ToInt(substr(birthdayCode, 0, 4))
-	key := (end - start) % 12
-
-	return data.ChineseZodiac()[key]
+	return ""
 }
 
 // substr 截取字符串
