@@ -58,6 +58,47 @@ func IsStrictValid(id string) bool {
 	return IsValid(id, true)
 }
 
+func GetInfoWithoutValidate(id string, strict bool) (IdInfo, error) {
+	code, _ := generateCode(id)
+	addressCode := cast.ToUint32(code["addressCode"])
+
+	// 地址信息
+	addressInfo := getAddressInfo(code["addressCode"], code["birthdayCode"], strict)
+	addressTree := []string{addressInfo["province"], addressInfo["city"], addressInfo["district"]}
+
+	// 是否废弃
+	abandoned := 0
+	if data.AddressCode()[addressCode] == "" {
+		abandoned = 1
+	}
+
+	// 生日
+	cst, _ := time.LoadLocation("Asia/Shanghai")
+	birthday, _ := time.ParseInLocation("20060102", code["birthdayCode"], cst)
+
+	// 性别
+	sex := 1
+	if (cast.ToInt(code["order"]) % 2) == 0 {
+		sex = 0
+	}
+
+	// 长度
+	length := cast.ToInt(code["type"])
+
+	return IdInfo{
+		AddressCode:   int(addressCode),
+		Abandoned:     abandoned,
+		Address:       addressInfo["province"] + addressInfo["city"] + addressInfo["district"],
+		AddressTree:   addressTree,
+		Birthday:      birthday,
+		Constellation: getConstellation(code["birthdayCode"]),
+		ChineseZodiac: getChineseZodiac(code["birthdayCode"]),
+		Sex:           sex,
+		Length:        length,
+		CheckBit:      code["checkBit"],
+	}, nil
+}
+
 // GetInfo 获取身份证信息
 func GetInfo(id string, strict bool) (IdInfo, error) {
 	// 验证有效性
